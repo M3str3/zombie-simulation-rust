@@ -1,0 +1,10 @@
+proximity_threshold = 50.0 # Distance to involve infection 
+infection_rate = 1 # Prob to get infected
+
+####################################
+#             ZOMBIES              #
+####################################
+zombies=1 # Zombies spawning at start
+zombie_speed_following=1.0 # Zombie alerted speed
+zombie_speed=0.5 # Zombie speed unalerted
+zombie_vision_range=10.0 # Zombie vision range
