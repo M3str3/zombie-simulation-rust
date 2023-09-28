@@ -1,10 +1,27 @@
-proximity_threshold = 50.0 # Distance to involve infection 
-infection_rate = 1 # Prob to get infected
+####################################
+#             SCREEN               #
+####################################
+screen_width=1600.0
+screen_height=1200.0
+
+
+####################################
+#              VIRUS               #
+####################################
+# Distance to involve infection 
+proximity_threshold = 10.0 
+# Prob human to get infected
+infection_rate = 1.0 
 
 ####################################
 #             ZOMBIES              #
 ####################################
-zombies=1 # Zombies spawning at start
-zombie_speed_following=1.0 # Zombie alerted speed
-zombie_speed=0.5 # Zombie speed unalerted
-zombie_vision_range=10.0 # Zombie vision range
+zombies=2 # Zombies spawning at start
+zombie_speed_following=2.0 # Zombie alerted speed
+zombie_speed=0.2 # Zombie speed unalerted
+zombie_vision_range=200.0 # Zombie vision range
+
+####################################
+#             HUMANS               #
+####################################
+humans=50
