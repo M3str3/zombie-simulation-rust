@@ -2,11 +2,12 @@ use ggez::event::EventHandler;
 use ggez::event::KeyCode;
 use ggez::graphics::Color;
 use ggez::input::keyboard;
-use ggez::{self, conf, graphics, Context, GameResult};
+use ggez::{self, conf, timer, graphics, Context, GameResult};
 use glam::{vec2, Vec2};
 use rand;
 use rand::seq::SliceRandom;
 
+mod quadtree;
 mod config;
 mod hud;
 mod human;
@@ -14,11 +15,14 @@ mod zombie;
 mod utils;
 mod collisions;
 
+use quadtree::{Quadtree,Rectangle};
 use collisions::handle_collisions;
 use config::{load_config, Config};
 use hud::HUD;
 use human::{Human, HumanPersonalities, HumanState};
 use zombie::Zombie;
+
+const DESIRED_FPS: u32 = 60;
 
 enum SimulationState {
     Running,
@@ -35,6 +39,10 @@ struct Simulation {
 
 impl EventHandler for Simulation {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
+        while !timer::check_update_time(ctx, DESIRED_FPS){
+            return  Ok(());
+        }
+
         match self.state {
             SimulationState::Running => {
                 if keyboard::is_key_pressed(ctx, KeyCode::P) {
@@ -42,15 +50,22 @@ impl EventHandler for Simulation {
                     return Ok(());
                 }
 
-                handle_collisions(&mut self.humans, &mut self.zombies);
+                let boundary = Rectangle { x: 0.0, y: 0.0, w: self.config.screen_width, h: self.config.screen_height };
+                let mut quadtree = Quadtree::new(boundary, 50);
+
+                for zombie in self.zombies.clone() { 
+                    quadtree.insert(zombie);
+                }
+
+                handle_collisions(&mut self.humans, &mut self.zombies, quadtree);
                 let delta_time = ggez::timer::delta(ctx).as_secs_f32();
 
                 for human in &mut self.humans {
                     human.update(ctx, &self.zombies);
                 }
 
-                for zombie in &mut self.zombies {
-                    zombie.update(ctx, &self.humans, &self.config);
+                for i in 0..self.zombies.len(){
+                    self.zombies[i].update(ctx, &self.humans,&self.config);
                 }
 
                 // Infect humans
@@ -83,7 +98,11 @@ impl EventHandler for Simulation {
                     .iter()
                     .filter(|h| h.is_infected)
                     .map(|h| Zombie {
-                        position: h.position,
+                        position: h.position + Vec2::new(rand::random::<f32>() * 2.0 - 1.0, rand::random::<f32>() * 2.0 - 1.0), 
+                        speed_current:Vec2 {
+                            x: (self.config.zombie_speed),
+                            y: (self.config.zombie_speed),
+                        },
                         speed: Vec2 {
                             x: (self.config.zombie_speed),
                             y: (self.config.zombie_speed),
@@ -152,7 +171,7 @@ fn main() -> GameResult {
                 Human {
                     position: vec2(
                         rand::random::<f32>() * config_loaded.screen_width,
-                        rand::random::<f32>() * config_loaded.screen_height,
+                        rand::random::<f32>() * config_loaded.screen_height, 
                     ),
                     speed: vec2(
                         rand::random::<f32>() * 4.0 - 2.0,
@@ -171,6 +190,7 @@ fn main() -> GameResult {
                     rand::random::<f32>() * config_loaded.screen_width,
                     rand::random::<f32>() * config_loaded.screen_height,
                 ),
+                speed_current:vec2(config_loaded.zombie_speed, config_loaded.zombie_speed),
                 speed: vec2(config_loaded.zombie_speed, config_loaded.zombie_speed),
                 speed_chasing: vec2(
                     config_loaded.zombie_speed_following,
