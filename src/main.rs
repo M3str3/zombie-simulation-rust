@@ -46,7 +46,7 @@ impl EventHandler for Simulation {
         match self.state {
             SimulationState::Running => {
                 if keyboard::is_key_pressed(ctx, KeyCode::P) {
-                    self.state = SimulationState::Paused; // Cambia el estado de pausa.
+                    self.state = SimulationState::Paused;
                     return Ok(());
                 }
 
@@ -84,7 +84,7 @@ impl EventHandler for Simulation {
                                 println!("Human infected");
                                 human.is_infected = true;
                             }
-                            break; // Si el humano ya está cerca de un zombi, no hay necesidad de verificar los demás zombis
+                            break; // If human is close to 1 zombie doesnt have to look others
                         }
                     }
 
@@ -122,7 +122,7 @@ impl EventHandler for Simulation {
             }
             SimulationState::Paused => {
                 if keyboard::is_key_pressed(ctx, KeyCode::P) {
-                    self.state = SimulationState::Running; // Cambia el estado de pausa.
+                    self.state = SimulationState::Running;
                 }
             }
         }
