@@ -47,12 +47,12 @@ pub fn handle_collisions(humans: &mut Vec<Human>, zombies: &mut Vec<Zombie>, qua
 
     }
 
-    // Aplica los ajustes para los humanos
+    // Humans adjusts
     for (index, adjustment) in human_adjustments.iter() {
         humans[*index].adjust_position(*adjustment);
     }
 
-    // Aplica los ajustes para los zombies
+    // Zombie adjusts
     for (index, adjustment) in zombie_adjustments.iter() {
         zombies[*index].adjust_position(*adjustment);
     }

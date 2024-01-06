@@ -51,47 +51,24 @@ impl EventHandler for Simulation {
                 }
 
                 let boundary = Rectangle { x: 0.0, y: 0.0, w: self.config.screen_width, h: self.config.screen_height };
-                let mut quadtree = Quadtree::new(boundary, 50);
+                let mut quadtree = Quadtree::new(boundary, self.config.quadtree_size);
 
                 for zombie in self.zombies.clone() { 
                     quadtree.insert(zombie);
                 }
 
                 handle_collisions(&mut self.humans, &mut self.zombies, quadtree);
-                let delta_time = ggez::timer::delta(ctx).as_secs_f32();
-
-                for human in &mut self.humans {
-                    human.update(ctx, &self.zombies);
+                
+                for i in 1..=self.humans.len() {
+                    let (left, right) = self.humans.split_at_mut(i);
+                    let current_human = left.last_mut().unwrap(); // En este punto, `left` nunca estará vacío.
+                    current_human.update(ctx, &self.zombies, &right, &self.config);
                 }
 
                 for i in 0..self.zombies.len(){
-                    self.zombies[i].update(ctx, &self.humans,&self.config);
+                    self.zombies[i].update(ctx, &mut self.humans,&self.config);
                 }
 
-                // Infect humans
-                for human in &mut self.humans {
-                    let mut is_near_any_zombie = false;
-
-                    for zombie in &self.zombies {
-                        if utils::is_near(human, zombie, self.config.proximity_threshold) {
-                            is_near_any_zombie = true;
-                            human.time_near_zombie += delta_time;
-
-                            if human.time_near_zombie >= 1.0
-                                && rand::random::<f32>() < self.config.infection_rate
-                            {
-                                #[cfg(debug_assertions)]
-                                println!("Human infected");
-                                human.is_infected = true;
-                            }
-                            break; // If human is close to 1 zombie doesnt have to look others
-                        }
-                    }
-
-                    if !is_near_any_zombie {
-                        human.time_near_zombie = 0.0;
-                    }
-                }
                 // Conver humans with is_infected
                 let new_zombies: Vec<Zombie> = self
                     .humans
@@ -174,8 +151,8 @@ fn main() -> GameResult {
                         rand::random::<f32>() * config_loaded.screen_height, 
                     ),
                     speed: vec2(
-                        rand::random::<f32>() * 4.0 - 2.0,
-                        rand::random::<f32>() * 4.0 - 2.0,
+                        rand::random::<f32>() * config_loaded.humans_speed_range_1 - 2.0,
+                        rand::random::<f32>() * config_loaded.humans_speed_range_2 - 2.0,
                     ),
                     time_near_zombie: 0.0,
                     is_infected: false,
