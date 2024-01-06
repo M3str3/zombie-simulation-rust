@@ -13,6 +13,11 @@ pub struct Config {
     pub zombies: i32,
     pub zombie_vision_range: f32,
     pub humans: i32,
+    pub humans_zombie_distance_to_start_run: f32,
+    pub quadtree_size: usize,
+    pub human_grouping_distance: f32,
+    pub humans_speed_range_1: f32,
+    pub humans_speed_range_2: f32,
 }
 
 pub fn load_config() -> Result<Config, toml::de::Error> {

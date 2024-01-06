@@ -1,27 +1,39 @@
 ####################################
+#           OPTIMIZATION           #
+####################################
+quadtree_size=100
+
+####################################
 #             SCREEN               #
 ####################################
-screen_width=1600.0
-screen_height=1200.0
-
+screen_width=1200.0
+screen_height=1080.0
 
 ####################################
 #              VIRUS               #
 ####################################
-# Distance to involve infection 
+#* Distance to involve infection 
 proximity_threshold = 10.0 
-# Prob human to get infected
-infection_rate = 1.0 
+#* Prob human to get infected
+infection_rate = 1
 
 ####################################
 #             ZOMBIES              #
 ####################################
-zombies=2 # Zombies spawning at start
-zombie_speed_following=2.0 # Zombie alerted speed
-zombie_speed=0.2 # Zombie speed unalerted
-zombie_vision_range=200.0 # Zombie vision range
+# Zombies spawning at start
+zombies=5
+# Zombie speed unalerted
+zombie_speed=0.2 
+# Zombie alerted speed
+zombie_speed_following=1.0 
+# Zombie vision range ( to get alerted )
+zombie_vision_range=300.0 
 
 ####################################
 #             HUMANS               #
 ####################################
-humans=50
+humans=3000
+humans_speed_range_1=2.0
+humans_speed_range_2=2.0
+humans_zombie_distance_to_start_run=200.0
+human_grouping_distance=150.0
